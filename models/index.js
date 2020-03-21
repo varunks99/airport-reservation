@@ -26,12 +26,9 @@ let passengerSchema = new Schema({
 const Passenger = model('Passenger', passengerSchema);
 
 let flightSchema = new Schema({
-  fno: {type: Number, required: true}),
+  flightNo: {type: Number, required: true}),
   source: String,
   destination: String,
-  class: String,
-  seatNo: String,
-  passengerNo: {type: ObjectId, ref:'Passenger'}),
   airCode: {type: ObjectId, ref:'Airline'}),
   routeNo: {type: ObjectId, ref:'Route'})
 })
@@ -48,9 +45,11 @@ const Employee = model('Employee', employeeSchema);
 let ticketSchema = new Schema({
   ticketId: String,
   fare: Number,
+  class: String,
   seatNo: String,
   date: Date,
-  passengerNo: {type: ObjectId, ref:'Passenger'})
+  flightNo: {type: ObjectId, ref:'Flight'},
+  passengerNo: {type: ObjectId, ref:'Passenger'}
 })
 const Ticket = model('Ticket', ticketSchema);
 
