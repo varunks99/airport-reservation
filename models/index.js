@@ -7,7 +7,7 @@ let airportSchema = new Schema({
   name: String,
   code: String,
   location: String
-}))
+})
 const Airport = model('Airport', airportSchema);
 
 let airlineSchema = new Schema({
@@ -26,11 +26,11 @@ let passengerSchema = new Schema({
 const Passenger = model('Passenger', passengerSchema);
 
 let flightSchema = new Schema({
-  flightNo: {type: Number, required: true}),
+  flightNo: {type: Number, required: true},
   source: String,
   destination: String,
-  airCode: {type: ObjectId, ref:'Airline'}),
-  routeNo: {type: ObjectId, ref:'Route'})
+  airCode: {type: ObjectId, ref:'Airline'},
+  routeNo: {type: ObjectId, ref:'Route'}
 })
 const Flight = model('Flight', flightSchema);
 
@@ -38,7 +38,7 @@ let employeeSchema = new Schema({
   empId: String,
   name: String,
   type: String,
-  airCode: {type: ObjectId, ref:'Airline'})
+  airCode: {type: ObjectId, ref:'Airline'}
 })
 const Employee = model('Employee', employeeSchema);
 
@@ -60,17 +60,12 @@ let routeSchema = new Schema({
 })
 const Route = model('Route', routeSchema);
 
-let locationSchema = new Schema({
-  location: String,
-  airportCode: {type: ObjectId, ref:'Airport'}
-})
-const Location = model('Location', locationSchema);
 
 
 // ------------- Relations ------------
 let offerSchema = new Schema({
-  airlineCode: {type: ObjectId, ref:'Airline'}),
-  ticketId: {type: ObjectId, ref:'Ticket'})
+  airlineCode: {type: ObjectId, ref:'Airline'},
+  ticketId: {type: ObjectId, ref:'Ticket'}
 })
 const offers = model('offers', offerSchema);
 
@@ -79,3 +74,7 @@ let landSchema = new Schema({
   flightNo: {type: ObjectId, ref:'Flight'}
 })
 const landsIn = model('landsIn', landSchema);
+
+module.exports = {
+  Airport, Airline, Passenger, Flight, Ticket
+}
