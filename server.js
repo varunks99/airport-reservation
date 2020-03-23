@@ -11,11 +11,9 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
-const {Airport, Airline, Passenger, Flight, Ticket} = require('./models/index');
+let routes = require('./routes/index')
 
-app.get('/', (req, res) => {
-  res.render('index')
-})
+app.use('/', routes);
 
 app.listen(3000, () => {
   console.log('Listening on port 3000');

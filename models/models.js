@@ -11,10 +11,14 @@ let airportSchema = new Schema({
 const Airport = model('Airport', airportSchema);
 
 let airlineSchema = new Schema({
-  code: String,
+  _id: {
+    type: String,
+    required: true
+  },
   name: String,
-  contact: String
+  contact: String,
 })
+
 const Airline = model('Airline', airlineSchema);
 
 let passengerSchema = new Schema({
@@ -26,11 +30,20 @@ let passengerSchema = new Schema({
 const Passenger = model('Passenger', passengerSchema);
 
 let flightSchema = new Schema({
-  flightNo: {type: Number, required: true},
+  _id: {
+    type: String,
+    required: true
+  },
   source: String,
   destination: String,
-  airCode: {type: ObjectId, ref:'Airline'},
-  routeNo: {type: ObjectId, ref:'Route'}
+  airCode: {
+    type: String,
+    ref: 'Airline'
+  },
+  routeNo: {
+    type: String,
+    ref: 'Route'
+  }
 })
 const Flight = model('Flight', flightSchema);
 
@@ -38,7 +51,10 @@ let employeeSchema = new Schema({
   empId: String,
   name: String,
   type: String,
-  airCode: {type: ObjectId, ref:'Airline'}
+  airCode: {
+    type: ObjectId,
+    ref: 'Airline'
+  }
 })
 const Employee = model('Employee', employeeSchema);
 
@@ -48,33 +64,31 @@ let ticketSchema = new Schema({
   class: String,
   seatNo: String,
   date: Date,
-  flightNo: {type: ObjectId, ref:'Flight'},
-  passengerNo: {type: ObjectId, ref:'Passenger'}
+  flightNo: {
+    type: ObjectId,
+    ref: 'Flight'
+  },
+  passengerNo: {
+    type: ObjectId,
+    ref: 'Passenger'
+  }
 })
 const Ticket = model('Ticket', ticketSchema);
 
 let routeSchema = new Schema({
-  routeNo: String,
+  _id: String,
   departureTime: String,
   arrivalTime: String
 })
 const Route = model('Route', routeSchema);
 
 
-
-// ------------- Relations ------------
-let offerSchema = new Schema({
-  airlineCode: {type: ObjectId, ref:'Airline'},
-  ticketId: {type: ObjectId, ref:'Ticket'}
-})
-const offers = model('offers', offerSchema);
-
-let landSchema = new Schema({
-  airportCode: {type: ObjectId, ref:'Airport'},
-  flightNo: {type: ObjectId, ref:'Flight'}
-})
-const landsIn = model('landsIn', landSchema);
-
 module.exports = {
-  Airport, Airline, Passenger, Flight, Ticket
+  Airport,
+  Airline,
+  Passenger,
+  Flight,
+  Employee,
+  Ticket,
+  Route
 }
