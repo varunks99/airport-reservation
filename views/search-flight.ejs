@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <%- include('./partials/header.ejs') %>
+
+  <body class="search-flight">
+    <form id="search-box" action="/search-flight" method="post" autocomplete="off">
+      <div class="form-row">
+        <div class="col">
+          <label for="from">Flight From:</label>
+          <input type="text" class="form-control" name="from" id="from-city">
+        </div>
+        <div class="col">
+          <label for="to">Flight To:</label>
+          <input type="text" class="form-control" name="to" id="to-city">
+        </div>
+
+        <button class="form-button" style="margin-top:35px;">Search</button>
+      </div>
+      <br><br>
+      <h4><%=message%></h4>
+      <div class="search-results">
+        <% if (flight) {%>
+        <div class="result">
+          <div class="heading"><%=flight.id%> <%=flight.airline%></div>
+          <div class="source">
+            <%=flight.departureTime%><br><%=flight.source%>
+          </div>
+          <div class="destination">
+            <%=flight.arrivalTime%><br><%=flight.destination%>
+          </div>
+        </div>
+        <%}%>
+      </div>
+    </form>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/airport-autocomplete-js@latest/dist/index.browser.min.js"></script>
+
+    <script type="text/javascript">
+      AirportInput("from-city")
+      AirportInput("to-city")
+    </script>
+
+    <%- include('./partials/footer.ejs')  %>
+
+  </body>
+
+</html>

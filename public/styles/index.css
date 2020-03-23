@@ -1,6 +1,11 @@
 body {
   width: 100%;
   height: 100%;
+  color: #084177;
+}
+
+*:focus {
+  outline: none;
 }
 
 .navbar .nav-item .nav-link {
@@ -20,7 +25,7 @@ body {
   border-radius: 20px;
 }
 
-#sky {
+.sky {
   position: absolute;
   left: 0;
   top: 0;
@@ -29,7 +34,7 @@ body {
   z-index: 1;
 }
 
-#airplane {
+.airplane {
   position: absolute;
   z-index: 2;
   left: 0;
@@ -37,7 +42,7 @@ body {
   margin: 100px 0 0 -900px;
 }
 
-#buttons {
+.heading {
   position: absolute;
   top: 0;
   left: 0;
@@ -46,7 +51,7 @@ body {
   color: #084177;
 }
 
-#buttons button {
+.heading button {
   background: #fff;
   color: #084177;
   color: #3dc6f4;
@@ -57,6 +62,80 @@ body {
   font-size: 18px;
 }
 
-#alert{
-  z-index: 99;
+/* =================== Search Flights ============== */
+.search-flight {
+  background: url('../images/sky.jpg');
+  background-size: cover;
+  background-position: left top;
+  display: flex;
+  justify-content: center;
+}
+
+.autocomplete-result {
+  cursor: pointer;
+  border: 1px solid black;
+  z-index: 100;
+}
+
+.autocomplete-result:hover {
+  background-color: #f2f2fc;
+}
+
+.autocomplete-results {
+  position: inherit;
+  background-color: #fff;
+  width: 100%;
+  z-index: 100;
+  border-radius: 0px 0px 3px 3px;
+  box-shadow: -2px 3px 18px 0px rgba(0, 0, 0, 0.15);
+}
+
+#search-box {
+  margin-top: 100px;
+  width: 700px;
+  min-height: 500px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 3px 5px 1px rgba(200, 200, 200, .5);
+}
+
+#search-box label {
+  color: #084177;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+
+#search-box input {
+  border-radius: 20px;
+  border: none;
+  text-decoration: none;
+  padding: 10px;
+  font-size: 20px;
+  color: #084177;
+}
+
+.form-button {
+  background: #084177;
+  height: 45px;
+  color: #fff;
+  border: none;
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: 10px 15px 20px 15px;
+  font-weight: 500;
+  border-radius: 20px;
+}
+
+.search-results {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 10px;
+  /* box-shadow: 0 1px 1px 1px rgba(0, 0, 0, .2); */
+}
+
+h4 {
+  color: #084177;
+  text-align: center;
 }

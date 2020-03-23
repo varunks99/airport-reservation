@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const {Airport, Airline, Passenger, Flight, Ticket} = require('./models/index');
+const {Airport, Airline, Passenger, Flight, Ticket} = require('./models/models');
 const LocalStrategy = require('passport-local').Strategy;
 const passportLocalMongoose = require('passport-local-mongoose');
 const path = require('path')
@@ -33,62 +33,9 @@ app.use(function(req, res, next){
   next();
 });
 
-app.get('/', (req, res) => {
-  res.render('index')
-})
+let routes = require('./routes/index')
 
-app.get('/login', (req,res) =>{
-  res.render('login')
-})
-
-app.post('/login', passport.authenticate('local',{
-  successRedirect: "/",
-  failureRedirect: "/login",
-}), (req, res) => {
-  
-});
-
-app.get('/signup', (req, res)=>{
-  res.render('signup')
-})
-
-app.post('/signup', (req, res) => {
-  Passenger.register(new Passenger({username: req.body.username}), req.body.password, function(err, User){
-    if(err){
-      console.log(err)
-      res.send(err)
-    } else {
-      passport.authenticate("local")(req, res, function(){
-        req.flash("success", "Welcome aboard, " + User.username + "!");
-        res.redirect("/")
-      })
-      Passenger.findOne({username: req.body.username}, function(err, User){
-        if(err){
-          console.log(err)
-        } else {
-          User.email = req.body.email
-          User.name = req.body.fullname;
-          User.gender = req.body.gender;
-          User.contact = req.body.contact;
-          User.save();
-        }
-        console.log(User)
-      })
-    }
-  })
-})
-
-app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
-})
-
-function isLoggedIn(req, res, next) {
-  if(req.isAuthenticated()){
-      return next();
-  }
-  res.redirect("/login");
-}
+app.use('/', routes);
 
 app.listen(3000, () => {
   console.log('Listening on port 3000');
