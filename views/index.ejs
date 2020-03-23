@@ -23,12 +23,37 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Fares</a>
         </li>
+        <% if(!currentUser){ %>
         <li class="nav-item">
-          <button class="btn nav-button">Sign In</button>
+          <a href="/login"><button class="btn nav-button">Sign In</button></a>
         </li>
+        <%  } else { %>
+        <li class="nav-item">
+          <a href="#" class="nav-link">Signed in as: <%=currentUser.username%></a>
+        </li>
+        <li class="nav-item">
+        <a href='/logout'><button class="btn nav-button">Logout</button></a>
+        </li>
+        <%  } %>
       </ul>
     </div>
   </nav>
+
+<% if(error && error.length > 0) { %> 
+  <div style="z-index: 99;">
+    <div class="alert alert-danger" role="alert">
+        <%= error %>
+    </div>
+  </div>
+<% } %>
+
+<% if(success && success.length > 0) { %> 
+  <div style="z-index: 99;">
+    <div class="alert alert-success" role="alert">
+        <%= success %>
+    </div>
+  </div>
+<% } %>
 
   <div id="sky">
     <img src="/images/sky.svg" alt="">
