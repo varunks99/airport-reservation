@@ -6,6 +6,7 @@
   <title></title>
   <link rel="stylesheet" href="/styles/index.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.1.0/anime.min.js" integrity="sha256-98Q574VkbV+PkxXCKSgL6jVq9mrVbS7uCdA+vt0sLS8=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -33,7 +34,7 @@
     <img src="/images/sky.svg" alt="">
   </div>
 
-  <div id="airplane">
+  <div id="airplane" class="airplane">
     <img src="/images/plane.png" alt="plane" width="800" height="600">
   </div>
 
@@ -44,6 +45,15 @@
     <button class="btn">Book A Flight</button>
     <button class="btn">Check Flights</button>
   </div>
+
+  <script type="text/javascript">
+    anime({
+      targets: '#airplane',
+      translateX: 1450,
+      duration: 2500,
+      easing: 'easeInCubic'
+    });
+  </script>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

@@ -34,7 +34,7 @@ body {
   z-index: 2;
   left: 0;
   top: 0;
-  margin: 100px 0 0 550px;
+  margin: 100px 0 0 -900px;
 }
 
 #buttons {
