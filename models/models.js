@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 const model = mongoose.model;
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const passportLocalMongoose = require('passport-local-mongoose');
 
 let airportSchema = new Schema({
   name: String,
@@ -22,11 +25,15 @@ let airlineSchema = new Schema({
 const Airline = model('Airline', airlineSchema);
 
 let passengerSchema = new Schema({
+  username : String,
+  email: String,
+  password: String,
   ppNo: Number,
   name: String,
   gender: String,
   contact: String
 })
+passengerSchema.plugin(passportLocalMongoose)
 const Passenger = model('Passenger', passengerSchema);
 
 let flightSchema = new Schema({

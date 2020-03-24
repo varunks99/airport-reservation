@@ -15,6 +15,59 @@ router.get('/', (req, res) => {
   res.render('index')
 })
 
+
+router.get('/login', (req, res) => {
+  res.render('login')
+})
+
+router.post('/login', passport.authenticate('local', {
+  successRedirect: "/",
+  failureRedirect: "/login",
+}), (req, res) => {
+
+});
+
+router.get('/signup', (req, res) => {
+  res.render('signup')
+})
+
+router.post('/signup', (req, res) => {
+  Passenger.register(new Passenger({
+    username: req.body.username
+  }), req.body.password, function(err, User) {
+    if (err) {
+      console.log(err)
+      res.send(err)
+    } else {
+      passport.authenticate("local")(req, res, function() {
+        req.flash("success", "Welcome aboard, " + User.username + "!");
+        res.redirect("/")
+      })
+      Passenger.findOne({
+        username: req.body.username
+      }, function(err, User) {
+        if (err) {
+          console.log(err)
+        } else {
+          User.email = req.body.email
+          User.name = req.body.fullname;
+          User.gender = req.body.gender;
+          User.contact = req.body.contact;
+          User.save();
+        }
+        console.log(User)
+      })
+    }
+  })
+})
+
+router.get('/search-flight', (req, res) => {
+  res.render('search-flight', {
+    message: 'Choose a source and destination',
+    flight: null
+  })
+})
+
 router.get('/search-flight', (req, res) => {
   res.render('search-flight', {
     message: 'Choose a source and destination',
@@ -52,4 +105,23 @@ router.post('/search-flight', (req, res) => {
     })
 })
 
+
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+})
+
+function displayLoginMessage(req, res, next) {
+  if (req.isAuthenticated()) {
+    req.flash("success", "Welcome aboard, " + User.username + "!");
+    return next();
+  }
+}
+
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
 module.exports = router;
