@@ -14,6 +14,8 @@ const {
 
 router.get('/', (req, res) => {
   res.render('index')
+  if (req.user)
+    req.flash("success", "Welcome aboard, " + req.user.username + "!");
 })
 
 
@@ -25,7 +27,7 @@ router.post('/login', passport.authenticate('local', {
   successRedirect: "/",
   failureRedirect: "/login",
 }), (req, res) => {
-
+  console.log(req.user);
 });
 
 router.get('/signup', (req, res) => {
@@ -41,7 +43,7 @@ router.post('/signup', (req, res) => {
       res.send(err)
     } else {
       passport.authenticate("local")(req, res, function() {
-        req.flash("success", "Welcome aboard, " + User.username + "!");
+        req.flash("success", "Welcome aboard, " + req.user.username + "!");
         res.redirect("/")
       })
       Passenger.findOne({
@@ -62,16 +64,12 @@ router.post('/signup', (req, res) => {
   })
 })
 
-router.get('/search-flight', (req, res) => {
-  res.render('search-flight', {
-    message: 'Choose a source and destination',
-    flight: null
-  })
-})
 
 router.get('/search-flight', (req, res) => {
   res.render('search-flight', {
     message: 'Choose a source and destination',
+    number: 1,
+    class: '',
     flights: [{
       source: null,
       destination: null
@@ -82,6 +80,10 @@ router.get('/search-flight', (req, res) => {
 router.post('/search-flight', (req, res) => {
   let fromCity = req.body.from.trim()
   let toCity = req.body.to.trim();
+  let flightClass = req.body.class;
+  let numberOfPassengers = req.body.number;
+
+  let classes = ['Economy', 'Business', 'First Class'];
   Flight.find({
       source: fromCity,
       destination: toCity
@@ -89,14 +91,24 @@ router.post('/search-flight', (req, res) => {
     .populate('airCode')
     .populate('routeNo')
     .exec((err, flights) => {
-      if (flights) {
+
+      if (flights.length != 0)
+        flights = flights.filter((flight, i, arr) => {
+          return flight.fare[classes.indexOf(flightClass)] != undefined
+        })
+
+      if (flights.length != 0) {
         res.render('search-flight', {
           message: 'Found the following flights',
+          number: numberOfPassengers,
+          flightClass: flightClass,
           flights: flights
         })
       } else {
         res.render('search-flight', {
-          message: `Sorry! No flights found for your route.`,
+          message: 'Sorry! No flights found for your route or class. Try changing the options and search again.',
+          number: numberOfPassengers,
+          class: flightClass,
           flights: [{
             source: fromCity,
             destination: toCity
@@ -106,6 +118,14 @@ router.post('/search-flight', (req, res) => {
     })
 })
 
+router.post('/book-flight', (req, res) => {
+  res.render('book-flight', {
+    user: req.user || {},
+    number: req.body.number,
+    flightClass: req.body.flightClass,
+    flight: JSON.parse(req.body.flight)
+  })
+})
 
 router.get('/logout', (req, res) => {
   req.logout();
@@ -125,4 +145,6 @@ function isLoggedIn(req, res, next) {
   }
   res.redirect("/login");
 }
+
+
 module.exports = router;

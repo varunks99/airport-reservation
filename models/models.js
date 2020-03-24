@@ -25,10 +25,9 @@ let airlineSchema = new Schema({
 const Airline = model('Airline', airlineSchema);
 
 let passengerSchema = new Schema({
-  username : String,
+  username: String,
   email: String,
   password: String,
-  ppNo: Number,
   name: String,
   gender: String,
   contact: String
@@ -43,7 +42,7 @@ let flightSchema = new Schema({
   },
   source: String,
   destination: String,
-  fare: Number,
+  fare: [Number],
   airCode: {
     type: String,
     ref: 'Airline'
@@ -76,10 +75,7 @@ let ticketSchema = new Schema({
     type: ObjectId,
     ref: 'Flight'
   },
-  passengerNo: {
-    type: ObjectId,
-    ref: 'Passenger'
-  }
+  passengerNo: String
 })
 const Ticket = model('Ticket', ticketSchema);
 

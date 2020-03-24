@@ -1,77 +1,114 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <%- include('./partials/header.ejs') %>
+<%- include('./partials/header.ejs') %>
 
-  <body class="search-flight">
-    <form class="search-box" action="/search-flight" method="post" autocomplete="off">
+<body class="search-flight">
+  <div class="search-box">
+    <form action="/search-flight" method="post" autocomplete="off">
       <div class="form-row">
-        <div class="col">
-          <label for="from">Flight From:</label>
+        <div class="form-group col-md-6">
+          <label for="from">From:</label>
           <input type="text" class="form-control" name="from" id="from-city" value="<%=flights[0].source%>">
         </div>
-        <div class="col">
-          <label for="to">Flight To:</label>
+        <div class="form-group col-md-6">
+          <label for="to">To:</label>
           <input type="text" class="form-control" name="to" id="to-city" value="<%=flights[0].destination%>">
         </div>
+        <br>
 
-        <button class="form-button" style="margin-top:35px;">Search</button>
-      </div>
-      <br><br>
-      <h4><%=message%></h4>
-      <% flights.forEach((flight) => {%>
-      <div class="search-results">
-        <% if (flight.id) {%>
-        <div class="result">
-          <div class="airline"><b><%=flight.id%> | <%=flight.airCode.name%></b></div>
-          <br>
-          <div class="detail-box">
-            <div class="source">
-              <h3><%=flight.routeNo.departureTime%></h3><%=flight.source%>
-            </div>
-            <div class="destination">
-              <h3><%=flight.routeNo.arrivalTime%></h3><%=flight.destination%>
-            </div>
-            <div class="price">
-              <h3>₹<%=flight.fare%></h3>
-            </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="class">Class</label>
+            <select class="form-control" name="class" style="border:none;">
+              <option value="Economy">Economy</option>
+              <option value="Business">Business</option>
+              <option value="First Class">First Class</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+
+          </div>
+          <div class="form-group col-md-4">
+            <label for="number">Passengers:</label>
+            <input type="number" class="form-control" name="number" min="1" max="10" value="<%=number%>">
+          </div>
+          <div class="form-group col-md-1">
+
+          </div>
+          <div class="form-group col-md-1">
+            <button class="form-button" style="margin-top:35px; margin-left: 100px;">Search</button>
           </div>
         </div>
-        <%}%>
-      </div>
-      <%})%>
+
     </form>
+  </div>
+  <br><br>
+  <h4><%=message%></h4>
+  <% flights.forEach((flight) => {%>
+  <div class="search-results">
+    <% if (flight.id) {%>
+    <div class="result">
+      <div class="detail-box" style="justify-content:space-between">
+        <div class="airline"><b><%=flight.id%> | <%=flight.airCode.name%></b></div>
+        <div class="flight-class" style="color:gray;"><%=flightClass%></div>
+      </div>
+      <br>
+      <div class="detail-box">
+        <div class="source">
+          <h3><%=flight.routeNo.departureTime%></h3><%=flight.source%>
+        </div>
+        <div class="destination">
+          <h3><%=flight.routeNo.arrivalTime%></h3><%=flight.destination%>
+        </div>
+        <div class="price">
+          <h3>₹<%=flight.fare%></h3>Fare
+        </div>
+      </div>
+      <br>
+      <form action="/book-flight" method="post" style="display:flex; justify-content:flex-end;">
+        <input type="text" name="flight" value="<%=JSON.stringify(flight)%>" hidden>
+        <input type="number" name="number" value="<%=number%>" hidden>
+        <input type="text" name="flightClass" value="<%=flightClass%>" hidden>
+        <button class="form-button">Book Now</button>
+      </form>
+    </div>
+    <%}%>
+    </div>
+    <%})%>
+  </div>
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/airport-autocomplete-js@latest/dist/index.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/airport-autocomplete-js@latest/dist/index.browser.min.js"></script>
 
-    <script type="text/javascript">
-      function formatPrice(price) {
-        let fare = String(price);
+  <script type="text/javascript">
+    function formatPrice(price) {
+      let fare = String(price);
+      if (fare.length > 3) {
         res = '';
-        if (fare.length > 3) {
-          res += `${fare.slice(fare.length-3)},`
-          fare = fare.slice(0, fare.length - 3)
-          while (fare.length > 1) {
-            res += `${fare.slice(fare.length-2)}`
-            fare = fare.slice(0, fare.length - 2)
-          }
-          if (fare.length)
-            res += fare
-          return [...res].reverse().join('');
+        if (fare.length % 2 == 0) {
+          res += `${fare.slice(0, 1)},`;
+          fare = fare.slice(1);
         }
-        return fare;
+        while (fare.length != 3) {
+          res += `${fare.slice(0, 2)},`
+          fare = fare.slice(2)
+        }
+        res += fare;
+        return res;
       }
+      return fare;
+    }
 
-      var options = {
-        formatting: `<div class="$(unique-result)" single-result" data-index="$(i)"> <b>$(IATA)<b> $(name) <br> <span style="color:gray;">$(city), $(country)</span></div>`
-      }
-      AirportInput("from-city", options);
-      AirportInput("to-city", options);
-    </script>
+    var options = {
+      formatting: `<div class="$(unique-result)" single-result" data-index="$(i)"> <b>$(IATA)<b> $(name) <br> <span style="color:gray;">$(city), $(country)</span></div>`
+    }
+    AirportInput("from-city", options);
+    AirportInput("to-city", options);
+  </script>
 
-    <%- include('./partials/footer.ejs')  %>
+  <%- include('./partials/footer.ejs')  %>
 
-  </body>
+</body>
 
 </html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<%- include('./partials/header.ejs') %>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body class="page-body">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="card card-signin my-5">
+          <div class="card-body">
+            <h5 class="card-title text-center">Book Your Flight</h5>
+            <form class="form-signin" action="/signup" method="POST">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="Flight Details" name="flightName" value="<%=flight._id%> | <%=flight.airCode.name%>" disabled autofocus>
+                <label for="inputName">Flight Number</label>
+              </div>
+
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="Departure Time" name="departureTime" value="<%=flight.routeNo.departureTime%> | <%=flight.source%>" disabled autofocus>
+                <label for="inputName">Departure Time and Place</label>
+              </div>
+
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="Arrival Time" name="arrivalTime" value="<%=flight.routeNo.arrivalTime%> | <%=flight.destination%>" disabled autofocus>
+                <label for="inputName">Arrival Time and Place</label>
+              </div>
+
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="Fare" name="fare" value="₹<%=flight.fare*number%>" disabled autofocus>
+                <label for="inputName">Total Fare</label>
+              </div>
+
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="Class" name="flightClass" value="<%=flightClass%>" disabled autofocus>
+                <label for="inputName">Class</label>
+              </div>
+
+              <div class="form-passengers">
+                <% for(let i=1; i<=number; i++) {%>
+                <h5>Passenger <%=i%></h5>
+                <div class="form-label-group">
+                  <input type="text" id="inputName<%=i%>" class="form-control" placeholder="Fullname" name="fullname<%=i%>" required autofocus>
+                  <label for="inputName<%=i%>">Full Name</label>
+                </div>
+                <div class="form-label-group">
+                  <input type="tel" id="inputContact<%=i%>" class="form-control" placeholder="Contact number" name="contact<%=i%>" required autofocus>
+                  <label for="inputContact<%=i%>">Contact Number</label>
+                </div>
+
+                <div class="form-label-group">
+                  <select class="form-control" name="gender<%=i%>">
+                    <option>Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-label-group">
+                  <input type="email" id="inputEmail<%=i%>" class="form-control" placeholder="Email Address" name="email<%=i%>" required autofocus>
+                  <label for="inputEmail<%=i%>">Email Address</label>
+                </div>
+                <br>
+                <%}%>
+              </div>
+
+              <button class="btn btn-lg btn-block text-uppercase" type="submit" style="background:#084177; color: white;">Book Flight</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('./partials/footer.ejs') %>
+</body>
