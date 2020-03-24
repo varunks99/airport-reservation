@@ -12,6 +12,7 @@ const {
 } = require('../models/models')
 
 
+
 router.get('/', (req, res) => {
   res.render('index')
   if (req.user)
@@ -23,7 +24,7 @@ router.get('/login', (req, res) => {
   res.render('login')
 })
 
-router.post('/login', passport.authenticate('local', {
+router.post('/login', displayLoginMessage, passport.authenticate('local', {
   successRedirect: "/",
   failureRedirect: "/login",
 }), (req, res) => {
@@ -118,13 +119,46 @@ router.post('/search-flight', (req, res) => {
     })
 })
 
+
+
 router.post('/book-flight', (req, res) => {
+  var flight = req.body.flight;
+  res.cookie("flight", flight);
+  var flightClass = req.body.flightClass
+  res.cookie("flightClass", flightClass)
   res.render('book-flight', {
     user: req.user || {},
     number: req.body.number,
     flightClass: req.body.flightClass,
     flight: JSON.parse(req.body.flight)
   })
+
+})
+
+router.post('/book-flight/new', (req, res) => {
+  var flightDetail = JSON.parse(req.cookies.flight);
+  var flightClass = req.cookies.flightClass;
+  function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
+ var pnrNo = makeid(6);
+ var flightID = flightDetail._id
+ var newTicket = {pnrNo: pnrNo, fare: flightDetail.fare[0], class: flightClass, date: Date.now(), flightNo: flightID}
+ Ticket.create(newTicket, function(err, createdTicket){
+   if(err) {
+     console.log(err);
+   } else {
+     console.log(createdTicket);
+     res.send(createdTicket);
+   }
+ })
+
 })
 
 router.get('/logout', (req, res) => {
@@ -133,10 +167,8 @@ router.get('/logout', (req, res) => {
 })
 
 function displayLoginMessage(req, res, next) {
-  if (req.isAuthenticated()) {
-    req.flash("success", "Welcome aboard, " + User.username + "!");
+    req.flash("success", "Successfully logged !");
     return next();
-  }
 }
 
 function isLoggedIn(req, res, next) {

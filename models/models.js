@@ -30,7 +30,8 @@ let passengerSchema = new Schema({
   password: String,
   name: String,
   gender: String,
-  contact: String
+  contact: String,
+  bookings: [String]
 })
 passengerSchema.plugin(passportLocalMongoose)
 const Passenger = model('Passenger', passengerSchema);
@@ -66,13 +67,13 @@ let employeeSchema = new Schema({
 const Employee = model('Employee', employeeSchema);
 
 let ticketSchema = new Schema({
-  ticketId: String,
+  pnrNo: String,
   fare: Number,
   class: String,
   seatNo: String,
   date: Date,
   flightNo: {
-    type: ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Flight'
   },
   passengerNo: String

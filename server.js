@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const uri = "mongodb+srv://user:iamauser@airport-wonyq.mongodb.net/test?retryWrites=true&w=majority";
+const cookieParser = require('cookie-parser');
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true});
 let app = express();
 
@@ -32,6 +33,8 @@ app.use(function(req, res, next){
   res.locals.success = req.flash("success");
   next();
 });
+
+app.use(cookieParser());
 
 let routes = require('./routes/index')
 
