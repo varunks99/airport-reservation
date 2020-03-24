@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 const {
   Airport,
@@ -71,10 +72,10 @@ router.get('/search-flight', (req, res) => {
 router.get('/search-flight', (req, res) => {
   res.render('search-flight', {
     message: 'Choose a source and destination',
-    flight: {
+    flights: [{
       source: null,
       destination: null
-    }
+    }]
   })
 })
 
