@@ -36,6 +36,7 @@ let flightSchema = new Schema({
   },
   source: String,
   destination: String,
+  fare: Number,
   airCode: {
     type: String,
     ref: 'Airline'

@@ -3,34 +3,42 @@
   <%- include('./partials/header.ejs') %>
 
   <body class="search-flight">
-    <form id="search-box" action="/search-flight" method="post" autocomplete="off">
+    <form class="search-box" action="/search-flight" method="post" autocomplete="off">
       <div class="form-row">
         <div class="col">
           <label for="from">Flight From:</label>
-          <input type="text" class="form-control" name="from" id="from-city">
+          <input type="text" class="form-control" name="from" id="from-city" value="<%=flights[0].source%>">
         </div>
         <div class="col">
           <label for="to">Flight To:</label>
-          <input type="text" class="form-control" name="to" id="to-city">
+          <input type="text" class="form-control" name="to" id="to-city" value="<%=flights[0].destination%>">
         </div>
 
         <button class="form-button" style="margin-top:35px;">Search</button>
       </div>
       <br><br>
       <h4><%=message%></h4>
+      <% flights.forEach((flight) => {%>
       <div class="search-results">
-        <% if (flight) {%>
+        <% if (flight.id) {%>
         <div class="result">
-          <div class="heading"><%=flight.id%> <%=flight.airline%></div>
-          <div class="source">
-            <%=flight.departureTime%><br><%=flight.source%>
-          </div>
-          <div class="destination">
-            <%=flight.arrivalTime%><br><%=flight.destination%>
+          <div class="airline"><b><%=flight.id%> | <%=flight.airCode.name%></b></div>
+          <br>
+          <div class="detail-box">
+            <div class="source">
+              <h3><%=flight.routeNo.departureTime%></h3><%=flight.source%>
+            </div>
+            <div class="destination">
+              <h3><%=flight.routeNo.arrivalTime%></h3><%=flight.destination%>
+            </div>
+            <div class="price">
+              <h3>₹<%=flight.fare%></h3>
+            </div>
           </div>
         </div>
         <%}%>
       </div>
+      <%})%>
     </form>
 
 
@@ -38,8 +46,28 @@
     <script src="https://cdn.jsdelivr.net/npm/airport-autocomplete-js@latest/dist/index.browser.min.js"></script>
 
     <script type="text/javascript">
-      AirportInput("from-city")
-      AirportInput("to-city")
+      function formatPrice(price) {
+        let fare = String(price);
+        res = '';
+        if (fare.length > 3) {
+          res += `${fare.slice(fare.length-3)},`
+          fare = fare.slice(0, fare.length - 3)
+          while (fare.length > 1) {
+            res += `${fare.slice(fare.length-2)}`
+            fare = fare.slice(0, fare.length - 2)
+          }
+          if (fare.length)
+            res += fare
+          return [...res].reverse().join('');
+        }
+        return fare;
+      }
+
+      var options = {
+        formatting: `<div class="$(unique-result)" single-result" data-index="$(i)"> <b>$(IATA)<b> $(name) <br> <span style="color:gray;">$(city), $(country)</span></div>`
+      }
+      AirportInput("from-city", options);
+      AirportInput("to-city", options);
     </script>
 
     <%- include('./partials/footer.ejs')  %>
