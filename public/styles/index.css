@@ -186,6 +186,11 @@ input[type="text"]:disabled {
   background-color: #3b5998;
 }
 
+.passenger-details{
+  color: #084177;
+  text-align: center;
+}
+
 /* Fallback for Edge
   -------------------------------------------------- */
 @supports (-ms-ime-align: auto) {
@@ -209,6 +214,11 @@ input[type="text"]:disabled {
   .form-label-group input:-ms-input-placeholder {
     color: #777;
   }
+}
+
+#greentick{
+  height: 30px;
+  width: 30px;
 }
 
 /* =================== Search Flights ============== */

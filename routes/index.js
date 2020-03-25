@@ -149,6 +149,7 @@ router.post('/book-flight', (req, res) => {
 
 })
 
+
 router.post('/book-flight/new', (req, res) => {
   let flightDetail = JSON.parse(req.cookies.flight);
   let numberOfPassengers = req.cookies.passengerNo;
@@ -197,14 +198,26 @@ router.post('/book-flight/new', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        createdTickets.push(createdTicket.toJSON())
+        createdTickets.push(createdTicket.toObject())
         if (i == numberOfPassengers) {
-          res.send(createdTickets)
+          console.log(createdTickets);
+          res.render('booking-confirmed',{ticket: createdTickets});
         }
       }
     })
   }
 })
+
+router.get('/delete', (req, res) => {
+  Ticket.deleteMany({}, function(err, result){
+    if(err){
+      console.log(err)
+    } else {
+      console.log(result)
+    }
+  })
+});
+
 
 router.get('/logout', (req, res) => {
   req.logout();
