@@ -10,7 +10,7 @@ const {
   Ticket,
   Route
 } = require('../models/models')
-var app = express();
+let app = express();
 
 
 router.get('/', (req, res) => {
@@ -121,11 +121,11 @@ router.post('/search-flight', (req, res) => {
 
 
 router.post('/book-flight', (req, res) => {
-  var flight = req.body.flight;
+  let flight = req.body.flight;
   res.cookie("flight", flight);
-  var flightClass = req.body.flightClass
+  let flightClass = req.body.flightClass
   res.cookie("flightClass", flightClass)
-  var noOfPassenger = req.body.number;
+  let noOfPassenger = req.body.number;
   res.cookie("passengerNo", noOfPassenger);
   res.render('book-flight', {
     user: req.user || {},
@@ -137,46 +137,55 @@ router.post('/book-flight', (req, res) => {
 })
 
 router.post('/book-flight/new', (req, res) => {
-  var flightDetail = JSON.parse(req.cookies.flight);
-  var numberOfPassengers = req.cookies.passengerNo;
+  let flightDetail = JSON.parse(req.cookies.flight);
+  let numberOfPassengers = req.cookies.passengerNo;
   console.log(numberOfPassengers);
-  var flightClass = req.cookies.flightClass;
+  let flightClass = req.cookies.flightClass;
+
   function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
- }
- var createdTickets = [{}]
- var flightID = flightDetail._id;
-  for(var i = 1; i<=numberOfPassengers; i++){
-  var passengerName = req.body[`fullname${i}`];
-  var passengerContact = req.body[`contact${i}`];
-  var passengerGender = req.body[`gender${i}`];
-  var passengerEmail = req.body[`email${i}`];
-  var pnrNo = makeid(6);
-  var PassengerDetails = {
-    passengerName: passengerName,
-    passengerContact: passengerContact,
-    passengerGender: passengerGender,
-    passengerEmail: passengerEmail
+  }
+
+  let createdTickets = []
+  let flightID = flightDetail._id;
+  for (let i = 1; i <= numberOfPassengers; i++) {
+    let passengerName = req.body[`fullname${i}`];
+    let passengerContact = req.body[`contact${i}`];
+    let passengerGender = req.body[`gender${i}`];
+    let passengerEmail = req.body[`email${i}`];
+    let pnrNo = makeid(6);
+
+    let PassengerDetails = {
+      passengerName: passengerName,
+      passengerContact: passengerContact,
+      passengerGender: passengerGender,
+      passengerEmail: passengerEmail
     }
-    var newTicket = {pnrNo: pnrNo, fare: flightDetail.fare[0], class: flightClass, date: Date.now(), flightNo: flightID, passengerDetails: PassengerDetails}
-    Ticket.create(newTicket, function(err, createdTicket){
-      if(err) {
+
+    let newTicket = {
+      pnrNo: pnrNo,
+      fare: flightDetail.fare[0],
+      class: flightClass,
+      date: Date.now(),
+      flightNo: flightID,
+      passengerDetails: PassengerDetails
+    }
+    Ticket.create(newTicket, function(err, createdTicket) {
+      if (err) {
         console.log(err);
       } else {
-        var tickett = createdTicket.toJSON();
-        app.set('CreatedTicket', tickett);
+        createdTickets.push(createdTicket.toJSON())
+        if (i == numberOfPassengers) {
+          res.send(createdTickets)
+        }
       }
     })
-    var ticket = app.get('CreatedTicket');
-    console.log(ticket)
-    createdTickets.push(ticket);
-    res.send(ticket)
   }
 })
 
@@ -186,8 +195,8 @@ router.get('/logout', (req, res) => {
 })
 
 function displayLoginMessage(req, res, next) {
-    req.flash("success", "Successfully logged !");
-    return next();
+  req.flash("success", "Successfully logged !");
+  return next();
 }
 
 function isLoggedIn(req, res, next) {
