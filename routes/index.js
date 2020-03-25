@@ -10,7 +10,7 @@ const {
   Ticket,
   Route
 } = require('../models/models')
-
+var app = express();
 
 
 router.get('/', (req, res) => {
@@ -83,7 +83,6 @@ router.post('/search-flight', (req, res) => {
   let toCity = req.body.to.trim();
   let flightClass = req.body.class;
   let numberOfPassengers = req.body.number;
-
   let classes = ['Economy', 'Business', 'First Class'];
   Flight.find({
       source: fromCity,
@@ -126,6 +125,8 @@ router.post('/book-flight', (req, res) => {
   res.cookie("flight", flight);
   var flightClass = req.body.flightClass
   res.cookie("flightClass", flightClass)
+  var noOfPassenger = req.body.number;
+  res.cookie("passengerNo", noOfPassenger);
   res.render('book-flight', {
     user: req.user || {},
     number: req.body.number,
@@ -137,6 +138,8 @@ router.post('/book-flight', (req, res) => {
 
 router.post('/book-flight/new', (req, res) => {
   var flightDetail = JSON.parse(req.cookies.flight);
+  var numberOfPassengers = req.cookies.passengerNo;
+  console.log(numberOfPassengers);
   var flightClass = req.cookies.flightClass;
   function makeid(length) {
     var result           = '';
@@ -147,18 +150,34 @@ router.post('/book-flight/new', (req, res) => {
     }
     return result;
  }
- var pnrNo = makeid(6);
- var flightID = flightDetail._id
- var newTicket = {pnrNo: pnrNo, fare: flightDetail.fare[0], class: flightClass, date: Date.now(), flightNo: flightID}
- Ticket.create(newTicket, function(err, createdTicket){
-   if(err) {
-     console.log(err);
-   } else {
-     console.log(createdTicket);
-     res.send(createdTicket);
-   }
- })
-
+ var createdTickets = [{}]
+ var flightID = flightDetail._id;
+  for(var i = 1; i<=numberOfPassengers; i++){
+  var passengerName = req.body[`fullname${i}`];
+  var passengerContact = req.body[`contact${i}`];
+  var passengerGender = req.body[`gender${i}`];
+  var passengerEmail = req.body[`email${i}`];
+  var pnrNo = makeid(6);
+  var PassengerDetails = {
+    passengerName: passengerName,
+    passengerContact: passengerContact,
+    passengerGender: passengerGender,
+    passengerEmail: passengerEmail
+    }
+    var newTicket = {pnrNo: pnrNo, fare: flightDetail.fare[0], class: flightClass, date: Date.now(), flightNo: flightID, passengerDetails: PassengerDetails}
+    Ticket.create(newTicket, function(err, createdTicket){
+      if(err) {
+        console.log(err);
+      } else {
+        var tickett = createdTicket.toJSON();
+        app.set('CreatedTicket', tickett);
+      }
+    })
+    var ticket = app.get('CreatedTicket');
+    console.log(ticket)
+    createdTickets.push(ticket);
+    res.send(ticket)
+  }
 })
 
 router.get('/logout', (req, res) => {

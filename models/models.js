@@ -73,10 +73,15 @@ let ticketSchema = new Schema({
   seatNo: String,
   date: Date,
   flightNo: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Flight'
   },
-  passengerNo: String
+  passengerDetails: {
+    passengerName: String,
+    passengerContact: Number,
+    passengerGenger: String,
+    passengerEmail: String
+  }
 })
 const Ticket = model('Ticket', ticketSchema);
 
