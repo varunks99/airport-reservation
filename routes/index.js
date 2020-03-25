@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const moment = require('moment');
 const router = express.Router();
 const {
   Airport,
@@ -10,7 +11,7 @@ const {
   Ticket,
   Route
 } = require('../models/models')
-let app = express();
+
 
 
 router.get('/', (req, res) => {
@@ -70,7 +71,7 @@ router.get('/search-flight', (req, res) => {
   res.render('search-flight', {
     message: 'Choose a source and destination',
     number: 1,
-    class: '',
+    date: '',
     flights: [{
       source: null,
       destination: null
@@ -81,9 +82,11 @@ router.get('/search-flight', (req, res) => {
 router.post('/search-flight', (req, res) => {
   let fromCity = req.body.from.trim()
   let toCity = req.body.to.trim();
+  let date = req.body.date;
   let flightClass = req.body.class;
   let numberOfPassengers = req.body.number;
   let classes = ['Economy', 'Business', 'First Class'];
+  let classIndex = classes.indexOf(flightClass);
   Flight.find({
       source: fromCity,
       destination: toCity
@@ -92,14 +95,20 @@ router.post('/search-flight', (req, res) => {
     .populate('routeNo')
     .exec((err, flights) => {
 
-      if (flights.length != 0)
+      if (flights.length != 0) {
         flights = flights.filter((flight, i, arr) => {
-          return flight.fare[classes.indexOf(flightClass)] != undefined
+          return flight.fare[classIndex] != undefined
         })
+        flights.forEach((flight, i, arr) => {
+          arr[i].fare = flight.fare[classIndex]
+        })
+      }
+
 
       if (flights.length != 0) {
         res.render('search-flight', {
           message: 'Found the following flights',
+          date: date,
           number: numberOfPassengers,
           flightClass: flightClass,
           flights: flights
@@ -107,6 +116,7 @@ router.post('/search-flight', (req, res) => {
       } else {
         res.render('search-flight', {
           message: 'Sorry! No flights found for your route or class. Try changing the options and search again.',
+          date: date,
           number: numberOfPassengers,
           class: flightClass,
           flights: [{
@@ -122,14 +132,17 @@ router.post('/search-flight', (req, res) => {
 
 router.post('/book-flight', (req, res) => {
   let flight = req.body.flight;
-  res.cookie("flight", flight);
+  res.cookie('flight', flight);
+  let date = req.body.date;
+  res.cookie('date', date);
   let flightClass = req.body.flightClass
-  res.cookie("flightClass", flightClass)
+  res.cookie('flightClass', flightClass)
   let noOfPassenger = req.body.number;
-  res.cookie("passengerNo", noOfPassenger);
+  res.cookie('passengerNo', noOfPassenger);
   res.render('book-flight', {
     user: req.user || {},
     number: req.body.number,
+    date: moment(date, 'DD/M/YYYY').format('dddd, MMMM Do YYYY'),
     flightClass: req.body.flightClass,
     flight: JSON.parse(req.body.flight)
   })
@@ -139,8 +152,9 @@ router.post('/book-flight', (req, res) => {
 router.post('/book-flight/new', (req, res) => {
   let flightDetail = JSON.parse(req.cookies.flight);
   let numberOfPassengers = req.cookies.passengerNo;
-  console.log(numberOfPassengers);
   let flightClass = req.cookies.flightClass;
+  let date = req.cookies.date;
+  date = date.split('/')
 
   function makeid(length) {
     let result = '';
@@ -154,6 +168,7 @@ router.post('/book-flight/new', (req, res) => {
 
   let createdTickets = []
   let flightID = flightDetail._id;
+  let departureTime = flightDetail.routeNo.departureTime;
   for (let i = 1; i <= numberOfPassengers; i++) {
     let passengerName = req.body[`fullname${i}`];
     let passengerContact = req.body[`contact${i}`];
@@ -172,7 +187,9 @@ router.post('/book-flight/new', (req, res) => {
       pnrNo: pnrNo,
       fare: flightDetail.fare[0],
       class: flightClass,
-      date: Date.now(),
+      date: new Date(date[2], date[1], date[0], departureTime.slice(0, 2), departureTime.slice(3), 00),
+      departureTime: departureTime,
+      arrivalTime: flightDetail.routeNo.arrivalTime,
       flightNo: flightID,
       passengerDetails: PassengerDetails
     }

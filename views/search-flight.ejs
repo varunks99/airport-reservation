@@ -2,6 +2,9 @@
 <html lang="en" dir="ltr">
 <%- include('./partials/header.ejs') %>
 
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+
 <body class="search-flight">
   <div class="search-box">
     <form action="/search-flight" method="post" autocomplete="off">
@@ -17,7 +20,14 @@
         <br>
 
         <div class="form-row">
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-3">
+            <label for="datepicker">Date</label>
+            <input type="text" class="form-control" id="datepicker" name="date" value="<%=date%>">
+          </div>
+          <div class="form-group col-md-1">
+
+          </div>
+          <div class="form-group col-md-3">
             <label for="class">Class</label>
             <select class="form-control" name="class" style="border:none;">
               <option value="Economy">Economy</option>
@@ -25,18 +35,18 @@
               <option value="First Class">First Class</option>
             </select>
           </div>
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-1">
 
           </div>
-          <div class="form-group col-md-4">
-            <label for="number">Passengers:</label>
+          <div class="form-group col-md-2">
+            <label for="number">Passengers</label>
             <input type="number" class="form-control" name="number" min="1" max="10" value="<%=number%>">
           </div>
           <div class="form-group col-md-1">
 
           </div>
           <div class="form-group col-md-1">
-            <button class="form-button" style="margin-top:35px; margin-left: 100px;">Search</button>
+            <button class="form-button" style="margin-top:35px; margin-left:-5px;">Search</button>
           </div>
         </div>
 
@@ -61,7 +71,7 @@
           <h3><%=flight.routeNo.arrivalTime%></h3><%=flight.destination%>
         </div>
         <div class="price">
-          <h3>₹<%=flight.fare%></h3>Fare
+          <h3>₹<%=formatPrice(flight.fare)%></h3>Fare
         </div>
       </div>
       <br>
@@ -69,6 +79,7 @@
         <input type="text" name="flight" value="<%=JSON.stringify(flight)%>" hidden>
         <input type="number" name="number" value="<%=number%>" hidden>
         <input type="text" name="flightClass" value="<%=flightClass%>" hidden>
+        <input type="text" name="date" value="<%=date%>" hidden>
         <button class="form-button">Book Now</button>
       </form>
     </div>
@@ -80,25 +91,29 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/airport-autocomplete-js@latest/dist/index.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 
   <script type="text/javascript">
-    function formatPrice(price) {
-      let fare = String(price);
-      if (fare.length > 3) {
-        res = '';
-        if (fare.length % 2 == 0) {
-          res += `${fare.slice(0, 1)},`;
-          fare = fare.slice(1);
-        }
-        while (fare.length != 3) {
-          res += `${fare.slice(0, 2)},`
-          fare = fare.slice(2)
-        }
-        res += fare;
-        return res;
-      }
-      return fare;
-    }
+    let picker = new Pikaday({
+      field: document.getElementById('datepicker'),
+      format: 'DD/M/YYYY',
+      toString(date, format) {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      },
+      parse(dateString, format) {
+        const parts = dateString.split('/');
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+      },
+      minDate: new Date(Date.now()),
+      maxDate: new Date(moment().add(365, 'days').calendar())
+    });
 
     var options = {
       formatting: `<div class="$(unique-result)" single-result" data-index="$(i)"> <b>$(IATA)<b> $(name) <br> <span style="color:gray;">$(city), $(country)</span></div>`
@@ -110,5 +125,25 @@
   <%- include('./partials/footer.ejs')  %>
 
 </body>
+
+<%
+function formatPrice(price) {
+  let fare = String(price);
+  if (fare.length > 3) {
+    res = '';
+    if (fare.length % 2 == 0) {
+      res += `${fare.slice(0, 1)},`;
+      fare = fare.slice(1);
+    }
+    while (fare.length != 3) {
+      res += `${fare.slice(0, 2)},`
+      fare = fare.slice(2)
+    }
+    res += fare;
+    return res;
+  }
+  return fare;
+}
+%>
 
 </html>

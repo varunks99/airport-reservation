@@ -21,6 +21,11 @@
               </div>
 
               <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="Date" name="date" value="<%=date%>" disabled autofocus>
+                <label for="inputName">Date</label>
+              </div>
+
+              <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="Departure Time" name="departureTime" value="<%=flight.routeNo.departureTime%> | <%=flight.source%>" disabled autofocus>
                 <label for="inputName">Departure Time and Place</label>
               </div>
@@ -31,7 +36,7 @@
               </div>
 
               <div class="form-label-group">
-                <input type="text" class="form-control" placeholder="Fare" name="fare" value="₹<%=flight.fare*number%>" disabled autofocus>
+                <input type="text" class="form-control" placeholder="Fare" name="fare" value="₹<%=formatPrice(flight.fare*number)%>" disabled autofocus>
                 <label for="inputName">Total Fare</label>
               </div>
 
@@ -42,6 +47,32 @@
 
               <div class="form-passengers">
                 <% for(let i=1; i<=number; i++) {%>
+                <% if(i==1) {%>
+                <h5>Passenger <%=i%></h5>
+                <div class="form-label-group">
+                  <input type="text" id="inputName<%=i%>" class="form-control" placeholder="Fullname" name="fullname<%=i%>" value="<%=user.name%>" required autofocus>
+                  <label for=" inputName<%=i%>">Full Name</label>
+                </div>
+                <div class="form-label-group">
+                  <input type="tel" id="inputContact<%=i%>" class="form-control" placeholder="Contact number" name="contact<%=i%>" value="<%=user.contact%>" required autofocus>
+                  <label for="inputContact<%=i%>">Contact Number</label>
+                </div>
+
+                <div class="form-label-group">
+                  <select class="form-control" name="gender<%=i%>">
+                    <option>Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-label-group">
+                  <input type="email" id="inputEmail<%=i%>" class="form-control" placeholder="Email Address" name="email<%=i%>" value="<%=user.email%>" required autofocus>
+                  <label for="inputEmail<%=i%>">Email Address</label>
+                </div>
+                <br>
+                <%} else {%>
                 <h5>Passenger <%=i%></h5>
                 <div class="form-label-group">
                   <input type="text" id="inputName<%=i%>" class="form-control" placeholder="Fullname" name="fullname<%=i%>" required autofocus>
@@ -67,6 +98,7 @@
                 </div>
                 <br>
                 <%}%>
+              <%}%>
               </div>
 
               <button class="btn btn-lg btn-block text-uppercase" type="submit" style="background:#084177; color: white;">Book Flight</button>
@@ -78,4 +110,24 @@
     </div>
   </div>
   <%- include('./partials/footer.ejs') %>
+
+  <%
+  function formatPrice(price) {
+    let fare = String(price);
+    if (fare.length > 3) {
+      res = '';
+      if (fare.length % 2 == 0) {
+        res += `${fare.slice(0, 1)},`;
+        fare = fare.slice(1);
+      }
+      while (fare.length != 3) {
+        res += `${fare.slice(0, 2)},`
+        fare = fare.slice(2)
+      }
+      res += fare;
+      return res;
+    }
+    return fare;
+  }
+  %>
 </body>

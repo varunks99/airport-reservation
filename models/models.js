@@ -72,6 +72,8 @@ let ticketSchema = new Schema({
   class: String,
   seatNo: String,
   date: Date,
+  departureTime: String,
+  arrivalTime: String,
   flightNo: {
     type: String,
     ref: 'Flight'
@@ -81,6 +83,10 @@ let ticketSchema = new Schema({
     passengerContact: Number,
     passengerGenger: String,
     passengerEmail: String
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now()
   }
 })
 const Ticket = model('Ticket', ticketSchema);
