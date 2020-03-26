@@ -3,6 +3,7 @@
   <title></title>
   <link rel="stylesheet" href="/styles/index.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <nav class="navbar fixed-top navbar-expand-lg">
@@ -13,7 +14,7 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">Bookings<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="/bookings">Bookings<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Fares</a>
@@ -24,12 +25,13 @@
       </li>
       <%  } else { %>
       <li class="nav-item">
-        <a href="#" class="nav-link">Signed in as: <%=currentUser.username%></a>
-      </li>
-      <li class="nav-item">
         <a href='/logout'><button class="btn nav-button">Logout</button></a>
       </li>
       <%  } %>
     </ul>
   </div>
 </nav>
+
+<%if(currentUser) {%>
+<h6 style="position:fixed;right:1px;bottom:0;">Signed in as: <%=currentUser.username%></h6>;
+<%}%>

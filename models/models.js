@@ -87,7 +87,8 @@ let ticketSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now()
-  }
+  },
+  bookedBy: String
 })
 const Ticket = model('Ticket', ticketSchema);
 

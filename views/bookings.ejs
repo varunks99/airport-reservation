@@ -1,0 +1,48 @@
+<%- include('./partials/header.ejs') %>
+
+
+<body class="page-body">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4 col-md-3 col-lg-4 mx-auto">
+        <% if(!user) {%>
+        <h1 style="color:#084177; width: 150%; margin-left: -100px">Please log in or create an account to view your awesome travel history!</h1>;
+        <%} else if(message) {%>
+        <div style="color:#084177; width: 200%; margin-left: -150px">
+          <h1> <%=message%></h1>
+          <h1>Book a flight now!</h1>
+          <br>
+          <h6><a href="/search-flight"><button class="form-button" name="button">Search Flights</button></a></h6>
+        </div>
+        <% } else {%>
+        <div class="card card-signin my-4" id="confirm-box">
+          <div class="card-body">
+            <h3 class="text-center">Here are all your bookings!</h3>
+            <br>
+            <% for(let i = 0; i<ticket.length; i++){ %>
+            <div class="passenger-details">
+              <h5 class="card-subtitle text-left"><strong>Date:</strong> <%=ticket[i].date.toString().slice(4, 15)%> </h5>
+              <br>
+              <strong> PNR</strong> : <%=ticket[i].pnrNo%> <br>
+              <strong>Name:</strong> <%=ticket[i].passengerDetails.passengerName%> <br>
+              <strong>Contact:</strong> <%=ticket[i].passengerDetails.passengerContact%> <br>
+              <strong>Flight No:</strong> <%=ticket[i].flightNo%> <br>
+
+              <strong>Fare:</strong> <%=ticket[i].fare%> <br>
+              <strong>Class:</strong> <%=ticket[i].class%> <br>
+              <strong>Departure Time:</strong> <%=ticket[i].departureTime%> <br>
+              <strong>Arrival Time:</strong> <%=ticket[i].arrivalTime%> <br>
+            </div>
+            <br>
+            <% } %>
+            <%}%>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <%- include('./partials/footer.ejs') %>
+</body>
+
+</html>

@@ -25,12 +25,23 @@ router.get('/login', (req, res) => {
   res.render('login')
 })
 
-router.post('/login', displayLoginMessage, passport.authenticate('local', {
-  successRedirect: "/",
-  failureRedirect: "/login",
-}), (req, res) => {
-  console.log(req.user);
-});
+router.post('/login', displayLoginMessage, (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect('/login');
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect(req.session.returnTo || '/');
+      delete req.session.returnTo;
+    });
+  })(req, res, next);
+})
 
 router.get('/signup', (req, res) => {
   res.render('signup')
@@ -67,7 +78,7 @@ router.post('/signup', (req, res) => {
 })
 
 
-router.get('/search-flight', (req, res) => {
+router.get('/search-flight', checkLoggedIn, (req, res) => {
   res.render('search-flight', {
     message: 'Choose a source and destination',
     number: 1,
@@ -101,7 +112,6 @@ router.post('/search-flight', (req, res) => {
         })
         flights.forEach((flight, i, arr) => {
           arr[i].fare = flight.fare[classIndex]
-
         })
       }
 
@@ -128,8 +138,6 @@ router.post('/search-flight', (req, res) => {
       }
     })
 })
-
-
 
 router.post('/book-flight', (req, res) => {
   let flight = req.body.flight;
@@ -193,7 +201,8 @@ router.post('/book-flight/new', (req, res) => {
       departureTime: departureTime,
       arrivalTime: flightDetail.routeNo.arrivalTime,
       flightNo: flightID,
-      passengerDetails: PassengerDetails
+      passengerDetails: PassengerDetails,
+      bookedBy: req.user.username
     }
     Ticket.create(newTicket, function(err, createdTicket) {
       if (err) {
@@ -202,7 +211,9 @@ router.post('/book-flight/new', (req, res) => {
         createdTickets.push(createdTicket.toObject())
         if (i == numberOfPassengers) {
           console.log(createdTickets);
-          res.render('booking-confirmed',{ticket: createdTickets});
+          res.render('booking-confirmed', {
+            ticket: createdTickets
+          });
         }
       }
 
@@ -210,9 +221,35 @@ router.post('/book-flight/new', (req, res) => {
   }
 })
 
+router.get('/bookings', checkLoggedIn, (req, res) => {
+  res.locals.user = req.user;
+  if (req.user) {
+    Ticket.find({
+        bookedBy: req.user.username
+      })
+      .sort({
+        date: -1
+      })
+      .exec((err, tickets) => {
+        if (tickets.length != 0) {
+          res.render('bookings', {
+            ticket: tickets,
+            message: null
+          })
+        } else {
+          res.render('bookings', {
+            message: "You don't seem to have any bookings on our site! :("
+          })
+        }
+      })
+  } else {
+    res.render('bookings')
+  }
+})
+
 router.get('/delete', (req, res) => {
-  Ticket.deleteMany({}, function(err, result){
-    if(err){
+  Ticket.deleteMany({}, function(err, result) {
+    if (err) {
       console.log(err)
     } else {
       console.log(result)
@@ -231,11 +268,20 @@ function displayLoginMessage(req, res, next) {
   return next();
 }
 
+function checkLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  req.session.returnTo = req.originalUrl;
+  next();
+}
+
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/login");
+  req.session.returnTo = req.originalUrl;
+  res.redirect('/login');
 }
 
 
