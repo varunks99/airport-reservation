@@ -3,26 +3,26 @@
 <%- include('./partials/header.ejs') %>
 
 <body>
-<div class="messages">
-  <% if(error && error.length > 0){ %>
+  <div class="messages">
+    <% if(error && error.length > 0){ %>
     <div class="alert" role="alert">
-        <%= error %>
+      <%= error %>
     </div>
-<% } %>
-<% if(success && success.length > 0){ %>
-    <div class="alert" role="alert">
-        <%= success %>
+    <% } %>
+    <% if(success && success.length > 0){ %>
+    <div class="alert alert-success" role="alert">
+      <%= success %>
     </div>
-<% } %>
+    <% } %>
 
-  <div class="sky">
-    <img src="/images/sky.svg" alt="">
-  </div>
+    <div class="sky">
+      <img src="/images/sky.svg" alt="">
+    </div>
 
-  <div class="airplane">
-    <img src="/images/plane.png" alt="plane" width="800" height="600">
+    <div class="airplane">
+      <img src="/images/plane.png" alt="plane" width="800" height="600">
+    </div>
   </div>
-</div>
 
   <div class="heading">
     <h1 style="font-size: 80px;">Travel Redefined</h1>
@@ -43,5 +43,6 @@
   </script>
   <%- include('./partials/footer.ejs') %>
 </body>
+
 
 </html>

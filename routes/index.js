@@ -101,6 +101,7 @@ router.post('/search-flight', (req, res) => {
         })
         flights.forEach((flight, i, arr) => {
           arr[i].fare = flight.fare[classIndex]
+
         })
       }
 
@@ -202,6 +203,7 @@ router.post('/book-flight/new', (req, res) => {
           res.send(createdTickets)
         }
       }
+
     })
   }
 })
@@ -212,7 +214,7 @@ router.get('/logout', (req, res) => {
 })
 
 function displayLoginMessage(req, res, next) {
-  req.flash("success", "Successfully logged !");
+  req.flash("success", "Hello, hope you are well!");
   return next();
 }
 
@@ -222,6 +224,7 @@ function isLoggedIn(req, res, next) {
   }
   res.redirect("/login");
 }
+
 
 
 module.exports = router;
